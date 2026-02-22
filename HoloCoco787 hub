@@ -1,0 +1,168 @@
+-- Raise a child Script 
+-- Made by HoloCoco787
+
+local player = game.Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+local CoreGui = game:GetService("CoreGui")
+
+-- --- SISTEMA ANTI-DUPLICADO Y ANTI-LAG ---
+-- Busca en PlayerGui y CoreGui para limpiar versiones viejas
+if PlayerGui:FindFirstChild("Sugargui") then
+    PlayerGui:FindFirstChild("Sugargui"):Destroy()
+end
+if CoreGui:FindFirstChild("Sugargui") then
+    CoreGui:FindFirstChild("Sugargui"):Destroy()
+end
+
+local Library = Instance.new("ScreenGui")
+Library.Name = "Sugargui"
+Library.Parent = PlayerGui -- Usamos PlayerGui para mayor estabilidad en Delta
+Library.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local Subtitle = Instance.new("TextLabel")
+local BringDabloonBtn = Instance.new("TextButton")
+local SpeedBtn = Instance.new("TextButton")
+local JumpBtn = Instance.new("TextButton")
+local UIStroke = Instance.new("UIStroke")
+local UICornerMain = Instance.new("UICorner")
+
+-- Botón Flotante H
+local OpenBtn = Instance.new("TextButton")
+local UICornerCircle = Instance.new("UICorner")
+local UIStrokeCircle = Instance.new("UIStroke")
+
+-- Configuración Menú Principal
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = Library
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.35, 0, 0.25, 0)
+MainFrame.Size = UDim2.new(0, 240, 0, 280)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+
+UICornerMain.CornerRadius = UDim.new(0, 10)
+UICornerMain.Parent = MainFrame
+
+UIStroke.Parent = MainFrame
+UIStroke.Thickness = 3
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+Title.Parent = MainFrame
+Title.Text = "Raise a child Script"
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 18
+
+Subtitle.Parent = MainFrame
+Subtitle.Text = "Made by HoloCoco787"
+Subtitle.Position = UDim2.new(0, 0, 0, 30)
+Subtitle.Size = UDim2.new(1, 0, 0, 20)
+Subtitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.TextSize = 11
+
+-- Botón "H" Flotante (Tamaño Mediano-Chico)
+OpenBtn.Name = "ToggleBtn"
+OpenBtn.Parent = Library
+OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+OpenBtn.Position = UDim2.new(0.05, 0, 0.4, 0)
+OpenBtn.Size = UDim2.new(0, 45, 0, 45)
+OpenBtn.Font = Enum.Font.GothamBold
+OpenBtn.Text = "H"
+OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenBtn.TextSize = 20
+OpenBtn.ZIndex = 10
+OpenBtn.Draggable = true
+
+UICornerCircle.CornerRadius = UDim.new(1, 0)
+UICornerCircle.Parent = OpenBtn
+
+UIStrokeCircle.Parent = OpenBtn
+UIStrokeCircle.Thickness = 2
+UIStrokeCircle.Color = Color3.fromRGB(255, 255, 255)
+
+OpenBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- --- FUNCIÓN OPTIMIZADA (SIN LAG) PARA TRAER MONEDAS ---
+local function bringDabloonsOptimized()
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = player.Character.HumanoidRootPart
+        local items = {}
+        
+        -- Primero recolectamos las referencias para no saturar el loop
+        for _, obj in pairs(game.Workspace:GetDescendants()) do
+            if obj.Name == "Dabloon" and obj:IsA("BasePart") then
+                table.insert(items, obj)
+            end
+        end
+        
+        -- Movemos las monedas de forma escalonada para evitar lag
+        for i, item in ipairs(items) do
+            if item and item.Parent then
+                item.CFrame = hrp.CFrame
+                -- Pausa mínima cada 5 monedas para dejar que el juego respire
+                if i % 5 == 0 then
+                    task.wait() 
+                end
+            end
+        end
+    end
+end
+
+-- Creación de Botones
+local function createBtn(btn, text, pos)
+    btn.Parent = MainFrame
+    btn.Text = text
+    btn.Position = pos
+    btn.Size = UDim2.new(0.8, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.Gotham
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+end
+
+createBtn(BringDabloonBtn, "Traer Dabloons", UDim2.new(0.1, 0, 0.25, 0))
+createBtn(SpeedBtn, "Velocidad: 55", UDim2.new(0.1, 0, 0.45, 0))
+createBtn(JumpBtn, "Salto Infinito", UDim2.new(0.1, 0, 0.65, 0))
+
+BringDabloonBtn.MouseButton1Click:Connect(bringDabloonsOptimized)
+
+SpeedBtn.MouseButton1Click:Connect(function() 
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = 55
+    end 
+end)
+
+local infJump = false
+JumpBtn.MouseButton1Click:Connect(function()
+    infJump = not infJump
+    JumpBtn.TextColor3 = infJump and Color3.fromRGB(0, 255, 255) or Color3.fromRGB(255, 255, 255)
+end)
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infJump and player.Character then
+        local hum = player.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum:ChangeState("Jumping") end
+    end
+end)
+
+-- Efecto RGB Neon (Loop suave)
+task.spawn(function()
+    while task.wait(0.05) do
+        if not Library or not Library.Parent then break end
+        local hue = tick() % 5 / 5
+        local color = Color3.fromHSV(hue, 1, 1)
+        UIStroke.Color = color
+        UIStrokeCircle.Color = color
+        Title.TextColor3 = color
+        OpenBtn.TextColor3 = color
+    end
+end)
