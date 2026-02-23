@@ -1,0 +1,19 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "GANZITO EDITION 🧊 V28 - SURVIVE IN AFRICA",
+   LoadingTitle = "CONFIGURANDO ACCESO PARA GANZITO...",
+   LoadingSubtitle = "Hecho por HoloCoco787",
+   ConfigurationSaving = { Enabled = false },
+   Theme = "Ocean", 
+})
+
+-- NOTA PERSONALIZADA PARA EL CLIENTE
+Rayfield:Notify({
+   Title = "ACCESO EXCLUSIVO",
+   Content = "Hecho para Ganzito | Autor: HoloCoco787. ¡Disfruta el script!",
+   Duration = 8
+})
+
+-- PESTAÑAS
+local TabFarm = Window:CreateTab("Farm & Red", 44833624
